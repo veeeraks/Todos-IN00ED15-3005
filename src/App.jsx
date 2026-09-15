@@ -1,6 +1,6 @@
 import './App.css'
 import { useState, useEffect } from 'react'
-import { useUser } from '../context/useUser'
+import { useUser } from './context/useUser'
 import axios from 'axios'
 import Row from './components/Row'
 
@@ -23,25 +23,26 @@ function App() {
 
   const addTask = (e) => {
     e.preventDefault()
-
     const description = task.trim()
 
     if (!description) return
-
-    const newTask = { description: description }
-
-    axios.post(`${apiUrl}/tasks`, { task: newTask })
+    const headers = {headers: { Authorization: `Bearer ${user.token}` }}
+  
+    const newTask = { description }
+    axios.post(`${apiUrl}/tasks`, { task: newTask }, headers)
       .then(response => {
         setTasks(currentTasks => [...currentTasks, response.data])
         setTask('')
       })
       .catch(error => {
-        alert(error.response?.data?.error || error.message)
+        alert(error.response ? error.response.data.error : error)
       })
-  }
+    }
 
   const deleteTask = (deleted) => {
-    axios.delete(`${apiUrl}/tasks/${deleted}`)
+    const headers = {headers: { Authorization: `Bearer ${user.token}` }}
+    
+    axios.delete(`${apiUrl}/tasks/${deleted}`, headers)
       .then(() => {
         setTasks(currentTasks =>
           currentTasks.filter(item => item.id !== deleted)

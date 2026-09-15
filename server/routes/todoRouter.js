@@ -1,35 +1,21 @@
 import { pool } from '../helper/db.js'
 import { Router } from 'express'
 import { auth } from '../helper/auth.js'
+import { getTasks, createTask } from '../controllers/taskController.js'
 
 const router = Router()
 
-router.get('/tasks', (req, res) => {
+router.get("/tasks",getTasks)
+router.post("/tasks", auth, createTask)
+
+/*router.get('/tasks', (req, res, next) => {
     pool.query('SELECT * FROM task', (err, result) => {
         if (err) {
             return next(err)
         }
         res.status(200).json(result.rows || [])
     })
-})
-
-
-router.delete('/tasks/:id', (req, res, next) => {
-    const { id } = req.params
-    pool.query('delete from task WHERE id = $1',
-        [id],
-        (err, result) => {
-            if (err) {
-                return next(err)
-            }
-            if (result.rowCount === 0) {
-                const error = new Error('Task not found')
-                error.status = 404
-                return next(error)
-            }
-            return res.status(200).json({ id: Number(id) })
-        })
-})
+})*/
 
 router.post('/tasks', auth, (req, res, next) => {
     const { task } = req.body
@@ -47,10 +33,11 @@ router.post('/tasks', auth, (req, res, next) => {
 })
 
 router.delete('/tasks/:id', auth, (req, res, next) => {
-    console.log("DELETE REQUEST:", req.params.id)
-    const { id } = req.params
 
+    const { id } = req.params
+    console.log("DELETE REQUEST:", req.params.id)
     console.log(`Deleting task with id: ${id}`)
+    
     pool.query('DELETE FROM task WHERE id = $1',
         [id], (err, result) => {
             if (err) {

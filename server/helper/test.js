@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import jwt from 'jsonwebtoken'
 import { pool } from './db.js'
 import { hash } from 'bcrypt'
 
@@ -22,4 +23,15 @@ const getToken = (email) => {
     return jwt.sign({ email }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' })
 }
 
-export { initializeTestDb, insertTestUser, getToken }
+const selectAllTasks = async () => {
+    return await pool.query('SELECT * FROM tasks')
+}
+
+const insertTask = async (description) => {
+    return await pool.query(
+        'INSERT INTO tasks (description) VALUES ($1) RETURNING *',
+        [description]
+    )
+}
+
+    export { initializeTestDb, insertTestUser, getToken, selectAllTasks, insertTask }

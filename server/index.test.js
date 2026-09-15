@@ -1,11 +1,14 @@
 import { expect } from "chai"
-import { initializeTestDb, insertTestUser, getToken } from "./helper/test.js"
+import { initializeTestDb, insertTestUser, getToken, selectAllTasks, insertTask
+} from "./helper/test.js"
 
 describe("Testing basic database functionality", () => {
     let token = null
     const testUser = { email: "foo@foo.com", password: "password123" }
     before(async () => {
         await initializeTestDb()
+        await insertTestUser(testUser)
+        token = getToken(testUser.email)
     })
 
     it("should get all tasks", async () => {
@@ -33,16 +36,20 @@ describe("Testing basic database functionality", () => {
 
         const createResponse = await fetch("http://localhost:3001/tasks", {
             method: "post",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify({ task: newTask })
         })
 
         const createdTask = await createResponse.json()
+        
         expect(createResponse.status).to.equal(201)
         const deleteResponse = await fetch(
             `http://localhost:3001/tasks/${createdTask.id}`,
             {
-                method: "delete"
+                method: "delete",
+                headers: { Authorization: `Bearer ${token}` }
             }
         )
         const data = await deleteResponse.json()
@@ -50,10 +57,12 @@ describe("Testing basic database functionality", () => {
         expect(data).to.include.all.keys(["id"])
         expect(data.id).to.equal(createdTask.id)
     })
+
     it("should not create a new task without description", async () => {
         const response = await fetch("http://localhost:3001/tasks", {
             method: "post",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` },
             body: JSON.stringify({ task: null })
         })
         const data = await response.json()
