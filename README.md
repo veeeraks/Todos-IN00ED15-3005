@@ -1,16 +1,69 @@
-# React + Vite
+# Todo Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Todo web application developed as a web programming project. The application allows users to register and log in, after which they can manage their own todo tasks.
 
-Currently, two official plugins are available:
+## Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React
+- Vite
+- JavaScript
+- Express
+- PostgreSQL
+- Axios
+- JWT authentication
+- bcrypt
+- React Router
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Users can:
 
-## Expanding the ESLint configuration
+- Sign up
+- Sign in
+- View todo tasks
+- Add new tasks
+- Delete tasks
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Authentication is required for adding and deleting tasks.
+
+When a task is added or deleted, the PostgreSQL database is updated accordingly.
+
+## Project Structure
+
+The frontend is built with React and Vite, while the backend is built with Express.
+
+```text
+todo/
+├── server/
+│   ├── controllers/
+│   ├── helper/
+│   ├── models/
+│   ├── routes/
+│   ├── index.js
+│   └── index.test.js
+│
+├── src/
+│   ├── components/
+│   ├── context/
+│   ├── screens/
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── package.json
+└── vite.config.js
+```
+
+## Testing
+
+The application includes automated tests for the main backend functionality. The tests are written using Mocha and Chai.
+
+The tests cover functionality such as:
+
+- Fetching tasks
+- Creating tasks
+- Deleting tasks
+- Validating task creation without a description
+- User registration
+- User sign in
+- JWT authentication when creating and deleting tasks
+- Checking the returned HTTP status codes and response data
